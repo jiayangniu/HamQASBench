@@ -14,14 +14,14 @@ The main question it tries to answer is:
 
 > For a given performance regime, what structure did the method repeatedly learn?
 
-It currently supports two trace styles:
+It supports two trace styles:
 
 - **RL action traces** from `crlqas`, `hyrlqas`, and similar RLQAS methods
 - **direct-gate snapshot traces** from methods such as `TFQAS` and `QuantumDARTS`
 
 ## What This Tool Uses
 
-The tool currently reads:
+The tool reads:
 
 - `episode_traces.txt`
 - `config_used.cfg`
@@ -54,12 +54,12 @@ Equivalent module entrypoint:
 conda run -n psqasbench python -m critical_structure_tool <result_dirs...>
 ```
 
-The recommended workflow is now:
+The workflow is:
 
 1. run `--mode list` to inspect the event-error distribution and bucket summary
 2. then run `--mode analyze` on the bucket you actually want to prune
 
-If `--out-dir` is omitted, the tool now auto-generates a directory name under:
+If `--out-dir` is omitted, the tool generates a directory name under:
 
 - `critical_structure_analysis/`
 
@@ -101,7 +101,7 @@ conda run -n psqasbench python analyze_critical_structure.py \
 
 ```bash
 conda run -n psqasbench python analyze_critical_structure.py \
-  results/crlqas/T2_CH2_8q/LevelCheck_EXP/T2_CH2_8q_rotosolve_s2_check \
+  results/crlqas/T2_CH2_8q/Formal_EXP/T2_CH2_8q_rotosolve_s2_20k \
   --mode analyze \
   --bucket 0.00 \
   --select-n 4 \
@@ -268,7 +268,7 @@ Typical outputs are written under `--out-dir`.
 
 ## Implementation Idea
 
-The current pipeline is:
+The pipeline is:
 
 ### 1. Discover runs
 
@@ -318,7 +318,7 @@ For every saved snapshot event, the tool records:
 
 It then writes `first_hit_error_distribution.tsv` so the user can inspect the error landscape before choosing what regime to analyze.
 
-This can now be run independently using:
+Run this independently using:
 
 - `--mode list`
 
@@ -414,35 +414,13 @@ After pruning all selected snapshot events, the tool compares the retained struc
 
 This is the final output used to judge whether a success regime corresponds to a consistent critical structure.
 
-## Current Problem That Still Needs To Be Solved
+## Reconstruction and interpretation
 
-The biggest unresolved problem is **reconstruction fidelity on harder systems**.
+Saved `analysis_snapshots` provide gate parameters for reconstructing a circuit.
+Action-only traces do not contain those parameters, so their circuits require
+fresh parameter optimization. The resulting state and energy can differ from
+those recorded during training.
 
-For easy systems such as `T1_BeH2_STO3G_6q`, the reconstructed baseline can still remain close to the trace-recorded low-error regime, so the retained structures are often interpretable.
-
-For harder cases such as `T2_CH2_8q`, this often breaks:
-
-- the trace may record a saved event in the `0.00 mHa` bucket,
-- but after reconstructing the same action prefix and re-optimizing it from scratch, the tool may land in a completely different basin,
-- producing a very large reconstructed baseline error.
-
-This used to happen because the tool reconstructed:
-
-- the discrete action prefix,
-- but **not** the original warm-start parameter context used during training.
-
-The new `analysis_snapshots` format improves this substantially by saving per-event gate parameters, but very path-sensitive systems may still require richer replay information in the future.
-
-So for difficult or branch-sensitive problems, the current tool may be pruning a circuit in the wrong basin.
-
-That means:
-
-- the current output can still be useful as a clue for branch diversity,
-- but it is not yet strong enough to support high-confidence causal claims about the true critical structure of the original training trajectory.
-
-This problem needs to be solved.
-
-The most likely long-term fix is:
-
-- saving more faithful intermediate circuit/parameter snapshots during training,
-- so the analysis tool can reconstruct not only the discrete circuit structure, but also a basin-faithful starting point for counterfactual pruning.
+Check the reconstructed baseline energy before interpreting a pruning result.
+Retained structures describe circuits under the analysis optimizer and tolerance;
+they do not establish a causal explanation of the original training trajectory.

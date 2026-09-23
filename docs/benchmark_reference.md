@@ -1,92 +1,60 @@
-# PSQASBench
+# HamQASBench reference
 
-**Pauli String Quantum Architecture Search Benchmark**
+HamQASBench provides five QAS implementations, molecular-instance generation,
+experiment configurations, and circuit-analysis tools. Start with the
+[README](../README.md) for installation and example commands.
 
-> **HamQASBench** (Hamiltonian-Informed Diagnostic Benchmark for Quantum Architecture
-> Search) is the paper/project name; **PSQASBench** is the internal repository name.
-> Both names refer to this benchmark codebase.
+## Instances and diagnostic comparisons
 
-A unified benchmarking framework for Reinforcement Learning–based Quantum Architecture Search (QAS).
-PSQASBench exposes systematic flaws in existing RL-for-QAS methods through a standardized 5-tier molecular test suite, unified evaluation metrics, and reproducible experimental protocols.
+The main suite contains eleven Hamiltonians. Code keys use T1–T5; the paper
+calls the corresponding diagnostic tasks R1–R5. H4_Chain is reused in the R4
+connectivity comparison, so these groups do not count distinct instances twice.
 
----
+| Code group | Instances | Comparison |
+| --- | --- | --- |
+| T1 / R1 | BeH2_STO3G, LiH_Equil | Circuit cost at chemical accuracy under shallow and deep budgets |
+| T2 / R2 | CH2 | State selection within a degenerate ground subspace |
+| T3 / R3 | H2_Stretch, H2O_StrongCorr, H4_Chain | Output and target single-qubit entropy profiles |
+| T4 / R4 | H3_Linear and H4_Chain (registered under T3) | All-to-all versus linear connectivity on the same Hamiltonian |
+| T5 / R5 | BeH2 at 8, 10, 12, and 14 qubits | A fixed-geometry ladder with varying basis sets and active spaces |
 
-## Motivation
+See [data preparation](data_preparation.md) for generation commands and
+[instance metadata](../artifact/instances.json) for registered files and settings.
+Generated NPZ files store Pauli coefficients, the scalar energy shift, spectral
+information, and available molecular metadata. Large instances can use sparse
+storage instead of a dense Hamiltonian matrix.
 
-Current QAS papers use different molecules, different circuit-quality metrics, and inconsistent checkpoint selection strategies — making cross-method comparison meaningless.  PSQASBench fixes this by providing:
+Exact reference energies use the full encoded qubit space. The electron count
+used to construct the Hamiltonian does not constrain the sector of its lowest
+state. For a degenerate ground level, an entropy profile describes a specified
+reference state, not the entire subspace; use the paper's reference-state
+conventions when comparing profiles.
 
-- **One molecular test suite** covering the finalized 5-tier benchmark suite (T1–T5)
-- **One evaluation protocol** with shared SR, CNOT@chem, D\_struct, D\_func metrics
-- **One runner interface** so every method runs through the same `main.py` entry point
-- **One post-hoc structure analysis tool** (`critical_structure_tool`) for diagnosing what circuit motifs RL methods actually learn
+## Measurements and saved records
 
----
+Chemical accuracy is an energy error of at most 1.6 mHa. The paper reports
+energy error and success alongside reference-relative gate count, local entropy
+mismatch for unique targets, and state diagnostics for degenerate targets.
+Gate counts use the common RX/RY/RZ/CNOT evaluation basis.
 
-## Molecular Test Suite (Final 5-Tier Benchmark)
+Success statistics depend on the records being counted. Reinforcement-learning
+rollout success rates pool successful and total rollouts at selected checkpoints.
+Run success rates for the other methods count selected evaluation circuits.
+These denominators must be identified explicitly.
 
-All Hamiltonians are Jordan-Wigner encoded and stored in `mol_data/` as `.npz` files containing `hamiltonian`, `weights`, `eigvals`, `energy_shift`, plus provenance metadata: `active_electrons`, `active_orbitals`, `basis`, `n_qubits`. Chemical accuracy threshold: **1.6 mHa**.
+Training records, selected circuits, and post-hoc re-optimized circuits are
+different artifacts. RL `best_eval.txt` gate histories omit optimized angles;
+re-optimizing them does not recover the original rollout state. The analysis
+tools operate on the inputs described in [analysis usage](../analysis/README.md).
+This code distribution does not include the paper's per-run experimental data.
 
-| Tier | Molecule | q | r_Z | r_>=2 | G1 | G2 | Gap (mHa) | S(q) |
-|------|----------|---|-----|-------|----|----|-----------|------|
-| T1 | BeH2_STO3G | 6 | 0.978 | 0.593 | 0.969 | 0.094 | 212 | `[.008,.008,.005,.005,.005,.005]` |
-| T1 | LiH_Equil | 6 | 0.876 | 0.654 | 0.891 | 0.225 | 77 | `[.018,.018,.006,.006,.013,.013]` |
-| T2 | CH2 | 8 | 0.907 | 0.483 | 0.945 | 0.210 | 0 (3-fold) | `[.004,.004,.004,.070,.000,.000,.000,.068]` |
-| T3 | H2_Stretch | 4 | 0.728 | 0.849 | 0.750 | 0.180 | 4 | `[.974,.974,.974,.974]` |
-| T3 | H2O_StrongCorr | 8 | 0.723 | 0.887 | 0.648 | 0.074 | 94 | `[.021,.021,.342,.342,.316,.316,.071,.071]` |
-| T3 | H4_Chain | 8 | 0.599 | 0.809 | 0.418 | 0.011 | 233 | `[.124,.124,.274,.274,.284,.284,.109,.109]` |
-| T4 | H3_Linear | 6 | 0.709 | 0.765 | 0.656 | 0.021 | 0 (2-fold) | `[.202,.139,.147,.147,.083,.245]` |
-| T5 | BeH2_631G | 8 | 0.953 | 0.560 | 0.980 | 0.046 | 90 | `[.024,.024,.002,.002,.002,.002,.021,.021]` |
-| T5 | BeH2_6311G | 10 | 0.923 | 0.533 | 0.963 | 0.010 | 63 | `[.011,.011,.001,.001,.001,.001,.008,.008,.002,.002]` |
-| T5 | BeH2_CCPVDZ | 12 | 0.889 | 0.498 | 0.904 | 0.019 | 68 | `[.022,.022,.002,.002,.002,.002,.012,.012,.003,.003,.008,.008]` |
-| T5 | BeH2_CCPVDZ | 14 | 0.767 | 0.700 | 0.621 | 0.000 | 61 | `[.039,.039,.023,.023,.014,.014,.014,.014,.018,.018,.009,.009,.016,.016]` |
+### Additional runtime diagnostics
 
-> **T4 note:** the `H3_Linear` benchmark uses nearest-neighbour connectivity. Its configs must set `connectivity = linear` under `[env]`.
-
----
-
-## Benchmark Metrics
-
-### Primary: 2D Pareto View
-
-| Axis | Metric | Definition |
-|------|--------|------------|
-| Quality | Energy Error (mHa) | \|E\_found − E\_exact\| |
-| Cost | CNOT Count | Number of CNOT gates in the found circuit |
-
-A method that reaches chemical accuracy with fewer CNOTs dominates one that uses more gates for the same quality.
-
-### Secondary Metrics
-
-| Metric | Definition |
-|--------|------------|
-| SR@chem | Fraction of K stochastic rollouts reaching chemical accuracy |
-| CNOT@chem | Median CNOT count among successful rollouts |
-| best\_error\_mha | Minimum energy error across all rollouts (mHa) |
-| nfev@chem | VQE function evaluations until first chemical accuracy hit |
-
-### Policy Circuit Diversity (PCD) — *new in this work*
-
-Computed from K stochastic rollouts with fixed policy, comparing prepared states via infidelity:
-
-```text
-d(ψᵢ, ψⱼ) = 1 − |⟨ψᵢ|ψⱼ⟩|²
-```
-
-| Metric | How computed | Interpretation |
-|--------|-------------|----------------|
-| D\_struct | All rotation angles fixed to π/4, compare ψᵢ(π/4) | Circuit-structure diversity |
-| D\_func | Optimised angles θ\*, compare ψᵢ(θ\*) | Functional-state diversity |
-
-#### Diagnostic matrix
-
-| D\_struct | D\_func | Diagnosis |
-|-----------|---------|-----------|
-| Low | Low | ✅ Ideal: consistent structure, stable optimisation |
-| High | Low | ⚠ Acceptable: different structures, same ground state (symmetry) |
-| Low | High | ❌ Landscape problem: structure consistent but optimisation unstable |
-| High | High | ❌ Unreliable: random walk |
-
----
+Some runners optionally report CNOT@chem, function-evaluation counts, and policy
+circuit diversity (PCD). These are implementation diagnostics, not replacements
+for the paper's evaluation protocol. PCD compares states using
+`1 - |<psi_i|psi_j>|^2`: `D_struct` fixes rotation angles to pi/4, while `D_func`
+uses optimized angles. Neither value alone identifies a cause of search failure.
 
 ## Implemented Methods
 
@@ -111,13 +79,13 @@ d(ψᵢ, ψⱼ) = 1 − |⟨ψᵢ|ψⱼ⟩|²
 QuantumDARTS has two phases with fundamentally different evaluation semantics:
 
 - **Phase 1 (Architecture Search):** Optimises soft Gumbel-softmax circuits via continuous relaxation.  These are *not* hardware-executable discrete circuits.  Phase 1 nfev is reported separately as `phase1_nfev` and is *not* directly comparable to RL method nfev.
-- **Phase 2 (Discrete Evaluation):** Fixes architecture weights with argmax and evaluates real discrete circuits.  This is the only phase whose nfev is comparable to RL baselines and is reported as `phase2_nfev`.
+- **Phase 2 (Discrete Evaluation):** Evaluates discrete candidates, including the argmax circuit and sampled choices, and reports `phase2_nfev`. Comparing costs across methods also requires accounting for the optimizer and evaluation batch.
 
 Papers must report Phase 1 and Phase 2 nfev separately to avoid misleading comparisons.
 
 #### GQEQAS: generative autoregressive circuit search
 
-GQEQAS adapts the Generative Quantum Eigensolver (GQE) into the PSQASBench framework.  A GPT-2 style decoder-only transformer (GPTQE) autoregressively generates circuit token sequences; the operator pool serves as the vocabulary.  The model is trained via a **logit-matching loss**: the cumulative sum of chosen-token logits is regressed toward ground-truth prefix energies, teaching the model to assign higher probability to tokens that reduce energy.
+GQEQAS adapts the Generative Quantum Eigensolver (GQE) into the HamQASBench framework.  A GPT-2 style decoder-only transformer (GPTQE) autoregressively generates circuit token sequences; the operator pool serves as the vocabulary.  The model is trained via a **logit-matching loss**: the cumulative sum of chosen-token logits is regressed toward ground-truth prefix energies, teaching the model to assign higher probability to tokens that reduce energy.
 
 Two operator pool types are supported:
 
@@ -150,7 +118,7 @@ See the [installation and reproduction guide](../README.md).
 ## Quick Start
 
 ```bash
-cd PSQASBench
+cd HamQASBench
 conda activate psqasbench
 
 # CRLQAS on T1 BeH2, CPU
@@ -245,7 +213,7 @@ save_every = 500
 [env]
 num_layers = 20
 accept_err = 0.0016
-connectivity = linear    # required for T4_H3_Linear only
+connectivity = linear    # all | linear; select the comparison condition
 
 [non_local_opt]
 optim_alg = COBYLA
@@ -259,7 +227,7 @@ What they control:
 - `general.num_parallel_envs`: parallel environments for training
 - `env.num_layers`: maximum circuit depth (= maximum episode steps)
 - `env.accept_err`: success threshold in Hartree
-- `env.connectivity`: `all` (default) or `linear`; `T4_H3_Linear_6q` requires `linear`
+- `env.connectivity`: `all` or `linear`; R4 compares both settings
 - `non_local_opt.optim_alg`: local angle optimizer (`COBYLA`, `Rotosolve`, `SPSA`, `AdamSPSA`, `PSRAdam`)
 - `non_local_opt.global_iters`: optimizer budget for `COBYLA`, `SPSA`, `AdamSPSA`, `PSRAdam`
 - `non_local_opt.rotosolve_sweeps`: sweep count for `Rotosolve`
@@ -309,7 +277,7 @@ accept_err = 0.0016               # chemical accuracy threshold (Ha)
 analysis_save_threshold = 0.0016  # save circuit snapshots below this energy error
 active_electrons = 2              # active-space electrons (must match .npz generation)
 active_orbitals = 3               # active-space orbitals (= num_qubits // 2 by default)
-connectivity = all                # all | linear (T4_H3_Linear uses linear)
+connectivity = all                # all | linear
 
 [operator_pool]
 pool_kind = primitive             # primitive | ucc
@@ -364,12 +332,15 @@ n_restarts = 1
 # parallel_eval_batch_size = 8
 ```
 
-**Key tuning notes:**
+**Configuration notes:**
 
-- `seq_len` / `length_mode`: set `seq_len` to match the RL gate budget for the molecule tier (50 for 4q/6q, 70 for 8q, 100 for 10q+); always use `length_mode = uniform` for Formal_EXP runs so the model sees variable-length circuits.
-- `warmup_epochs`: pre-training on random circuits before the online loop stabilises the logit-matching loss early; set to ~10% of total `epochs`.
-- `eval_every` / `eval_n_sequences`: controls how often eval checkpoints are written; `eval_n_sequences = 100` matches the RL `eval_K` budget.
-- `replay_buffer_size` / `replay_mix_ratio`: replay improves sample efficiency in the online loop; `replay_mix_ratio = 0.5` means half the batch is fresh, half from history.
+- `seq_len` and `length_mode` control the maximum length and how lengths are sampled.
+- `warmup_epochs` controls the initial offline-training period.
+- `eval_every` and `eval_n_sequences` control evaluation frequency and sample count.
+- `replay_buffer_size` and `replay_mix_ratio` control retained training samples.
+
+Use the supplied configuration for the selected method and instance. The fields
+above illustrate supported options rather than a common computational budget.
 
 ---
 
@@ -413,9 +384,10 @@ results/<method>/<mol>/<config>/seed<seed>/
 ```
 
 For RLQAS methods (`crlqas`, `hyrlqas`), the full training trace is written.  `TFQAS`
-and `QuantumDARTS` also now write compatibility files for post-hoc structure analysis,
-but their trace semantics are different: they serialize candidate/final circuits as
-pseudo-episodes rather than logging an RL training trajectory.
+and `QuantumDARTS` write compatibility files for post-hoc structure analysis,
+with method-specific trace semantics. TFQAS records candidate snapshots as
+pseudo-episodes. QuantumDARTS records sampled discrete circuits at evaluation
+checkpoints; its step field identifies the training epoch.
 
 Common files you will typically find are:
 
@@ -501,7 +473,7 @@ For **old result files** without `analysis_snapshots`, the tool falls back to le
 Recommended wrapper script:
 
 ```bash
-cd PSQASBench
+cd HamQASBench
 conda activate psqasbench
 
 # Interactive: prints bucket summary and prompts for selection
@@ -519,7 +491,7 @@ python -m analysis.analyze_critical_structure \
 
 # Harder 8-qubit case — larger slack, smaller budget
 python -m analysis.analyze_critical_structure \
-  results/crlqas/T2_CH2_8q/LevelCheck_EXP/T2_CH2_8q_rotosolve_s2_check \
+  results/crlqas/T2_CH2_8q/Formal_EXP/T2_CH2_8q_rotosolve_s2_20k \
   --bucket 0.00 \
   --select-n 4 \
   --beam-width 4 \
@@ -629,18 +601,3 @@ Training run (CRLQAS / HyRLQAS / RENEW / TFQAS / QuantumDARTS / GQEQAS)
 ```
 
 ---
-
-
-## Known Systematic Issues (benchmark findings)
-
-These are documented as findings; fixes are noted where planned:
-
-1. **Circuit Structure Bias** — RL methods reach chemical accuracy but use far more gates than necessary.  Root cause: fixed max depth forces agents to use all steps; energy-only reward provides no incentive for circuit simplicity.  Diagnosed via `critical_structure_tool`; concept-proof fix is CRLQAS-STOP (planned).
-
-2. **Checkpoint Selection Ambiguity** — All existing methods save checkpoints at global-best energy, biasing saved policies toward deep circuits.  No method implements Pareto-optimal checkpoint selection.  Documented as benchmark finding; not fixed.
-
-3. **Training Instability** — Seed variance is large and largely unreported in prior work.  Quantified via SR@chem across ≥ 5 seeds per molecule × method.
-
-4. **Curriculum Threshold Sensitivity** — The initial `accept_err` and tightening schedule affect convergence significantly but are rarely ablated.  Isolated via the LevelCheck experiment group in `configs/crlqas/LevelCheck_EXP/`.
-
-5. **Reconstruction Fidelity (Hard Branch-Sensitive Cases)** — RLQAS circuits for branch-sensitive molecules, most notably `T2_CH2_8q`, can depend on specific angle trajectories accumulated during training. Cold-start reconstruction in post-hoc analysis may fail for some harder-bucket episodes. This is partially addressed by the `analysis_snapshots` trace format (with legacy `first_hit_snapshot` fallback), which requires re-running experiments to populate for old runs.

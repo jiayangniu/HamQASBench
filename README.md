@@ -1,9 +1,9 @@
-# HamQASBench / PSQASBench
+# HamQASBench
 
 A reproducible benchmark for quantum architecture search, with a shared molecular
 suite, runner interface, evaluation metrics, and circuit-structure diagnostics.
-**HamQASBench** is the paper/project name; **PSQASBench** is the historical code
-and repository name. Existing molecule keys and result paths retain compatibility.
+The `psqasbench` environment name and `PSQAS_RESULTS_DIR` variable are retained
+for compatibility with existing installations.
 
 This repository contains the benchmark reproduction code and selected analysis
 tools. It does not bundle experiment outputs, checkpoints, or Hamiltonian binaries.
@@ -109,12 +109,9 @@ python -m analysis.analyze_entropy --help
 The [full benchmark reference](docs/benchmark_reference.md) describes metrics,
 configuration fields, method-specific accounting and saved artifacts.
 
-## What belongs in Git
+## Files and outputs
 
-Commit source code, reviewed configs, documentation and the explicitly selected
-small manifests in `artifact/`. Root-level additions are ignored by default;
-review `.gitignore` deliberately when adding a new public component. Generated
-CSV/TSV, plots, archives, logs, checkpoints, caches, local environments, editor
-settings and machine-local launch/synchronization scripts are excluded. Internal
-paper drafts, handoffs and exploratory research directories are not part of this
-code distribution. Data can be archived separately without adding it to Git history.
+Source code, configurations, documentation, and instance metadata are tracked in
+Git. Generated Hamiltonians, run outputs, figures, and checkpoints are stored
+locally and are not included in this repository. See
+[data preparation](docs/data_preparation.md) for generating the main suite.
