@@ -12,9 +12,9 @@ this script:
   5. Reports qubit-by-qubit comparison and mean absolute error.
 
 Usage:
-    python analyze_entropy.py critical_structure_analysis/tier1_beh2_depth10/
-    python analyze_entropy.py critical_structure_analysis/  # all subdirs
-    python analyze_entropy.py dir1/ dir2/ dir3/
+    python -m analysis.analyze_entropy critical_structure_analysis/tier1_beh2_depth10/
+    python -m analysis.analyze_entropy critical_structure_analysis/  # all subdirs
+    python -m analysis.analyze_entropy dir1/ dir2/ dir3/
 
 Options:
     --optimizer inherit|cobyla|rotosolve
@@ -38,7 +38,7 @@ from critical_structure_tool.circuit_utils import (
 )
 from critical_structure_tool.types import GateSpec, RunContext
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 _AXIS_MAP = {"RX": 1, "RY": 2, "RZ": 3}
 _GATE_ROT = re.compile(r"(RX|RY|RZ)\(q=(\d+)\)")

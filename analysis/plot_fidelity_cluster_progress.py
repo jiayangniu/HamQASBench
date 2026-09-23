@@ -18,7 +18,7 @@ The intended workflow is:
 
 Example:
 
-    python plot_fidelity_cluster_progress.py \
+    python -m analysis.plot_fidelity_cluster_progress \
       critical_structure_analysis/l3_ch2_8q_bucket0p00_ep10000_20000
 """
 from __future__ import annotations
@@ -30,7 +30,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 FIDELITY_ROW_RE = re.compile(
     r"^\|\s*(\d+)\s*\|\s*`?([^`|]+)`?\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"

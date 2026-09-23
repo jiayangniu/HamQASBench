@@ -1,0 +1,13 @@
+f6089a486c1400d5c2a28e3d4c4c343da343bcdead2966aad1ab4893606b658b  mol_data/L1_BeH2_STO3G_6q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz
+bfbd5a56764da271293087224028b0e7d961a245399f3f4a6e8ca4a8a8d7d6cf  mol_data/L2_LiH_Equil_6q_geom_Li_.0_.0_0.0;_H_.0_.0_1.595_jordan_wigner.npz
+6b9b4f4757a40790b494dfaa079b1ce081f7928b310985dae918b852c39e39f8  mol_data/L3_CH2_Singlet_8q_geom_C_.0_.0_0.0;_H_.0_0.86_0.73;_H_.0_-0.86_0.73_jordan_wigner.npz
+90747ada357d5710b9c20cc90896fe24196ffdc409f36f6e2c5e7017504162d3  mol_data/L4_H2_Stretch_4q_geom_H_.0_.0_0.0;_H_.0_.0_2.5_jordan_wigner.npz
+3521cc2108dfb7df2e63463af032f53d503cd86afaf8003f1d7f8837595919b7  mol_data/L4_H2O_StrongCorr_8q_geom_O_.0_.0_0.0;_H_.0_1.186_0.918;_H_.0_-1.186_0.918_jordan_wigner.npz
+3be003998c239fcb04b2b7f567cac3b3cd4aa9824b22f0d926472091494fae00  mol_data/L5_H4_Chain_8q_geom_H_.0_.0_0.0;_H_.0_.0_1.0;_H_.0_.0_2.0;_H_.0_.0_3.0_jordan_wigner.npz
+fc633a0eabfac11235c7998c95816f1f71e89293e088fa500423004a7c652f6b  mol_data/L5_H3_Linear_6q_geom_H_.0_.0_0.0;_H_.0_.0_1.0;_H_.0_.0_2.0_jordan_wigner.npz
+23325631f8b364c95084f13a73f2fcafb04c517e2d4bf01bac7fd596f9bfed02  mol_data/L6_BeH2_631G_8q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz
+fa61e4710f2403a5c40a5e30e0a9e49f2fb97b3f7079421975c89061b4b14bd5  mol_data/L6_BeH2_6311G_10q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz
+7ed4be9c04a7156fd133f9e91511819b7bc9f19d43eb7ed8a0045788d877033c  mol_data/L6_BeH2_CCPVDZ_12q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz
+3c5a96da7c06a3f523cc0c157ecf2bdc5a8a4584c4a29a9aaa574c96c53fb6e8  mol_data/L6_BeH2_CCPVDZ_14q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz
+ab4c5f09a430a49202dc4744826bbd771130b1c6857c0e493ebe9acbe7125bda  mol_data/H2O_10q_geom_H_-0.02_0._0.;_O_0.84_0.45_0.;_H_1.48_-0.27_0._jordan_wigner.npz
+624f8e54b42ce418eb47cf7c35a78849f2889ac6de62c480a55f692adf8d3ae9  mol_data/LiH_12q_geom_Li_0._0._0.;_H_0._0._3.4_jordan_wigner.npz

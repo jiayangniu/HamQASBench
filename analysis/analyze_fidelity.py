@@ -14,14 +14,14 @@ this script:
   5. Writes fidelity_analysis.md and fidelity_matrix.tsv to the same directory.
 
 Usage:
-    python analyze_fidelity.py <analysis_dir> [<analysis_dir2> ...]
-    python analyze_fidelity.py critical_structure_analysis/l1_beh2_depth10_bucket027/
-    python analyze_fidelity.py critical_structure_analysis/  # process all subdirs
+    python -m analysis.analyze_fidelity <analysis_dir> [<analysis_dir2> ...]
+    python -m analysis.analyze_fidelity critical_structure_analysis/l1_beh2_depth10_bucket027/
+    python -m analysis.analyze_fidelity critical_structure_analysis/  # process all subdirs
 
     # Use the same optimizer AND hyperparams as the training run (recommended):
-    python analyze_fidelity.py <dir> --optimizer inherit
+    python -m analysis.analyze_fidelity <dir> --optimizer inherit
     # Force rotosolve explicitly:
-    python analyze_fidelity.py <dir> --optimizer rotosolve --rotosolve-sweeps 4
+    python -m analysis.analyze_fidelity <dir> --optimizer rotosolve --rotosolve-sweeps 4
 
 The script uses the 'run_dir' field in summary.tsv to automatically locate the
 .npz Hamiltonian file and training hyperparameters via config_used.cfg.
@@ -53,7 +53,7 @@ from critical_structure_tool.circuit_utils import (
 )
 from critical_structure_tool.types import GateSpec, RunContext
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 # ── Argument parsing ───────────────────────────────────────────────────────────

@@ -8,7 +8,7 @@ The saved `.npz` files contain:
 
 These files are convenient for QAS / VQE experiments that work directly in the
 full computational basis.  For spectra restricted to a fixed particle-number
-and spin sector, see `prepare_molecules_physical.py`.
+and spin sector, a separate sector-restricted generator is required.
 
 Running this script as __main__ regenerates all T1-T4 benchmark molecules
 (7 molecules, 4-8 qubits).  For the T5 BeH2 basis-set scalability series
@@ -289,4 +289,4 @@ if __name__ == "__main__":
 
     print("=== T1–T4 generation complete ===")
     print("For T5 BeH2 scalability series (8–14 qubits) run:")
-    print("  python mol_gen/prepare_beh2_basis_series.py")
+    print("  See docs/data_preparation.md for the four explicit T5 cases.")

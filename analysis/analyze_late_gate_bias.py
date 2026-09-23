@@ -20,7 +20,7 @@ from critical_structure_tool.io_utils import (
 )
 
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def parse_args() -> argparse.Namespace:

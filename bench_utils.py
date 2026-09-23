@@ -59,6 +59,9 @@ MOL_FILES = {
     "L6_BeH2_6311G_10q":   "L6_BeH2_6311G_10q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz",
     "L6_BeH2_CCPVDZ_12q":  "L6_BeH2_CCPVDZ_12q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz",
     "L6_BeH2_CCPVDZ_14q":  "L6_BeH2_CCPVDZ_14q_geom_Be_.0_.0_0.0;_H_.0_.0_1.326;_H_.0_.0_-1.326_jordan_wigner.npz",
+    # HyCRLQAS large-molecule additions (10q H2O, 12q LiH at stretched geometry)
+    "H2O_10q":  "H2O_10q_geom_H_-0.02_0._0.;_O_0.84_0.45_0.;_H_1.48_-0.27_0._jordan_wigner.npz",
+    "LiH_12q":  "LiH_12q_geom_Li_0._0._0.;_H_0._0._3.4_jordan_wigner.npz",
 }
 
 # Final benchmark-facing molecule keys.  These map onto the existing mol_data
@@ -75,8 +78,12 @@ FINAL_SUITE_MOL_FILES = {
     "T5_BeH2_6311G_10q":   MOL_FILES["L6_BeH2_6311G_10q"],
     "T5_BeH2_CCPVDZ_12q":  MOL_FILES["L6_BeH2_CCPVDZ_12q"],
     "T5_BeH2_CCPVDZ_14q":  MOL_FILES["L6_BeH2_CCPVDZ_14q"],
+    "H2O_10q":             MOL_FILES["H2O_10q"],
+    "LiH_12q":             MOL_FILES["LiH_12q"],
 }
 MOL_FILES.update(FINAL_SUITE_MOL_FILES)
+
+
 
 LEGACY_BENCH_ALIASES = {
     "L1_BeH2_STO3G_6q": "T1_BeH2_STO3G_6q",
@@ -175,6 +182,8 @@ METHOD_DEFAULT_CONFIGS = {
         "T5_BeH2_6311G_10q": "Formal_EXP/T5_BeH2_6311G_10q_rotosolve_s2_20k.cfg",
         "T5_BeH2_CCPVDZ_12q": "Formal_EXP/T5_BeH2_CCPVDZ_12q_rotosolve_s2_20k.cfg",
         "T5_BeH2_CCPVDZ_14q": "Formal_EXP/T5_BeH2_CCPVDZ_14q_rotosolve_s2_20k.cfg",
+        "H2O_10q":            "Formal_EXP/H2O_10q_rotosolve_15k.cfg",
+        "LiH_12q":            "Formal_EXP/LiH_12q_rotosolve_15k.cfg",
     },
     "hyrlqas": {
         "T1_BeH2_STO3G_6q": "Formal_EXP/T1_BeH2_STO3G_6q_cobyla_20k_depth10.cfg",
@@ -190,7 +199,7 @@ METHOD_DEFAULT_CONFIGS = {
         "T5_BeH2_CCPVDZ_14q": "Formal_EXP/T5_BeH2_CCPVDZ_14q_rotosolve_s2_20k.cfg",
     },
     "qdarts": {
-        "T1_BeH2_STO3G_6q": "Formal_EXP/T1_BeH2_STO3G_6q.cfg",
+        "T1_BeH2_STO3G_6q": "Formal_EXP/T1_BeH2_STO3G_6q_depth10.cfg",
         "T1_LiH_Equil_6q": "Formal_EXP/T1_LiH_Equil_6q_depth10.cfg",
         "T2_CH2_8q": "Formal_EXP/T2_CH2_8q.cfg",
         "T3_H2_Stretch_4q": "Formal_EXP/T3_H2_Stretch_4q.cfg",
@@ -201,6 +210,8 @@ METHOD_DEFAULT_CONFIGS = {
         "T5_BeH2_6311G_10q": "Formal_EXP/T5_BeH2_6311G_10q.cfg",
         "T5_BeH2_CCPVDZ_12q": "Formal_EXP/T5_BeH2_CCPVDZ_12q.cfg",
         "T5_BeH2_CCPVDZ_14q": "Formal_EXP/T5_BeH2_CCPVDZ_14q.cfg",
+        "H2O_10q":            "Formal_EXP/H2O_10q.cfg",
+        "LiH_12q":            "Formal_EXP/LiH_12q.cfg",
     },
     "tfqas": {
         "T1_BeH2_STO3G_6q": "Formal_EXP/T1_BeH2_STO3G_6q_depth10.cfg",
@@ -214,6 +225,8 @@ METHOD_DEFAULT_CONFIGS = {
         "T5_BeH2_6311G_10q": "Formal_EXP/T5_BeH2_6311G_10q.cfg",
         "T5_BeH2_CCPVDZ_12q": "Formal_EXP/T5_BeH2_CCPVDZ_12q.cfg",
         "T5_BeH2_CCPVDZ_14q": "Formal_EXP/T5_BeH2_CCPVDZ_14q.cfg",
+        "H2O_10q":            "Formal_EXP/H2O_10q.cfg",
+        "LiH_12q":            "Formal_EXP/LiH_12q.cfg",
     },
     "gqeqas": {
         "T1_BeH2_STO3G_6q": "Formal_EXP/T1_BeH2_STO3G_6q_depth10.cfg",
@@ -227,6 +240,8 @@ METHOD_DEFAULT_CONFIGS = {
         "T5_BeH2_6311G_10q": "Formal_EXP/T5_BeH2_6311G_10q.cfg",
         "T5_BeH2_CCPVDZ_12q": "Formal_EXP/T5_BeH2_CCPVDZ_12q.cfg",
         "T5_BeH2_CCPVDZ_14q": "Formal_EXP/T5_BeH2_CCPVDZ_14q.cfg",
+        "H2O_10q":            "Formal_EXP/H2O_10q.cfg",
+        "LiH_12q":            "Formal_EXP/LiH_12q.cfg",
     },
 }
 

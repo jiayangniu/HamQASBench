@@ -45,13 +45,13 @@ For `QuantumDARTS`, `episode_traces.txt` is a real training-time trace. Each eva
 Recommended entrypoint:
 
 ```bash
-conda run -n crlqas_env python analyze_critical_structure.py <result_dirs...>
+conda run -n psqasbench python analyze_critical_structure.py <result_dirs...>
 ```
 
 Equivalent module entrypoint:
 
 ```bash
-conda run -n crlqas_env python -m critical_structure_tool <result_dirs...>
+conda run -n psqasbench python -m critical_structure_tool <result_dirs...>
 ```
 
 The recommended workflow is now:
@@ -77,7 +77,7 @@ The generated name uses a shortened encoding of:
 This only prints and saves the event-error distribution and bucket summary.
 
 ```bash
-conda run -n crlqas_env python analyze_critical_structure.py \
+conda run -n psqasbench python analyze_critical_structure.py \
   results/crlqas/T1_BeH2_STO3G_6q/Depth_EXP/T1_BeH2_STO3G_6q_cobyla_depth10 \
   --mode list \
   --out-dir critical_structure_analysis/t1_beh2_buckets
@@ -86,7 +86,7 @@ conda run -n crlqas_env python analyze_critical_structure.py \
 ### Example: Analyze A Selected Bucket
 
 ```bash
-conda run -n crlqas_env python analyze_critical_structure.py \
+conda run -n psqasbench python analyze_critical_structure.py \
   results/crlqas/T1_BeH2_STO3G_6q/Depth_EXP/T1_BeH2_STO3G_6q_cobyla_depth10 \
   --mode analyze \
   --bucket 0.55 \
@@ -100,7 +100,7 @@ conda run -n crlqas_env python analyze_critical_structure.py \
 ### Example: Heavier 8-Qubit Case
 
 ```bash
-conda run -n crlqas_env python analyze_critical_structure.py \
+conda run -n psqasbench python analyze_critical_structure.py \
   results/crlqas/T2_CH2_8q/LevelCheck_EXP/T2_CH2_8q_rotosolve_s2_check \
   --mode analyze \
   --bucket 0.00 \

@@ -1,5 +1,21 @@
+import os
+
+# Hard cap: every run uses exactly ONE CPU thread. Must be set before
+# numpy/torch/qulacs are first imported (OpenMP/BLAS pools are sized at
+# library load time). Shared-server policy: many concurrent runs, 1 thread each.
+for _v in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS",
+           "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS",
+           "QULACS_NUM_THREADS"):
+    os.environ[_v] = "1"
+
 import sys
 import torch
+
+torch.set_num_threads(1)
+try:
+    torch.set_num_interop_threads(1)
+except RuntimeError:
+    pass  # already initialised (e.g. re-entry); intra-op cap above still holds
 from pathlib import Path
 
 from bench_utils import (
